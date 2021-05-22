@@ -1,33 +1,69 @@
-# Laravel for Platform.sh
+## Blender
 
-<p align="center">
-<a href="https://console.platform.sh/projects/create-project?template=https://raw.githubusercontent.com/platformsh/template-builder/master/templates/laravel/.platform.template.yaml&utm_content=laravel&utm_source=github&utm_medium=button&utm_campaign=deploy_on_platform">
-    <img src="https://platform.sh/images/deploy/lg-blue.svg" alt="Deploy on Platform.sh" width="180px" />
-</a>
-</p>
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![StyleCI](https://styleci.io/repos/43971660/shield?branch=master)](https://styleci.io/repos/43971660)
+[![Quality Score](https://img.shields.io/scrutinizer/g/spatie-custom/blender.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie-custom/blender)
 
-This template provides a basic Laravel skeleton.  It comes pre-configured to use a MariaDB database and Redis for caching and sessions using a Laravel-specific bridge library that runs during Composer autoload.  The public files symlink is also replaced with a custom web path definition so it is unnecessary.  It is intended for you to use as a starting point and modify for your own needs.
+Blender is the Laravel template that is used for (nearly) all our projects.
 
-Laravel is an opinionated, integrated rapid-application-development framework for PHP.
+You may use our template but please notice that we offer no support whatsoever. We also don't
+follow semver for this project and won't guarantee that the code (especially the master branch) is stable. In short: when using this, you're on your own.
 
-## Features
+## Install
 
-* PHP 7.4
-* MariaDB 10.4
-* Redis 5.0
-* Automatic TLS certificates
-* Composer-based build
+This guide assumes you're using [Laravel Valet](https://github.com/laravel/valet)
 
-## Customizations
+### Laravel App
 
-The following changes have been made relative to a plain Laravel project.  If using this project as a reference for your own existing project, replicate the changes below to your project.
+Download the master branch
 
-* The `.platform.app.yaml`, `.platform/services.yaml`, and `.platform/routes.yaml` files have been added.  These provide Platform.sh-specific configuration and are present in all projects on Platform.sh.  You may customize them as you see fit.
-* An additional Composer library, [`platformsh/laravel-bridge`](https://github.com/platformsh/laravel-bridge), has been added.  It automatically maps Platform.sh's environment variables to Laravel's environment variables where possible.  It leverages the [`platformsh/config-reader`](https://github.com/platformsh/config-reader-php) library.
-* The Laravel Bridge library also automatically configures Laravel to use Redis for both caching and session storage.  That may be disabled by removing or changing the name of the `rediscache` and `redissession` relationships in `.platform.app.yaml`.
-* Laravel normally wants you to create a symlink for the public storage directory, using the `artisan storage:link` command.  That is not necessary and will not work on Platform.sh due to the read-only file system.  Instead, a dedicated web path mapping is included for the `/storage` path that has the same effect.
+```bash
+git clone https://github.com/spatie/blender.git
+```
 
-## References
+Make a copy `.env.example` and rename to `.env`
 
-* [Laravel](https://laravel.com/)
-* [PHP on Platform.sh](https://docs.platform.sh/languages/php.html)
+Install the composer dependencies
+
+```bash
+composer install
+```
+
+Finally make sure you have a database named `blender`, and run the migrations and seeds
+
+```bash
+php artisan migrate --seed
+```
+
+### Assets
+
+Installing Blender's front end dependencies requires `yarn`.
+
+```
+yarn
+```
+
+Blender uses [Laravel Mix](https://laravel.com/docs/5.5/mix) to build assets.
+To build assets run:
+
+```bash
+yarn run dev
+```
+
+Available build tasks are defined in `package.json`
+
+
+### Customisation
+
+- Most of our projects are in Dutch. You can change the language in `config/app.php`.
+- We use [Redactor](https://imperavi.com/redactor/) from Imperavi as text editor but are not licensed to open source this. The text editor is hence degraded to a standard text area unless you comment out this part in `resources/assets/back/app.js`
+
+## Colofon
+
+### Contributing
+
+Generally we won't accept any PR requests to Blender. If you have discovered a bug or have an idea to improve the code, contact us first before you start coding.
+
+### License
+
+Blender and The Laravel framework are open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)

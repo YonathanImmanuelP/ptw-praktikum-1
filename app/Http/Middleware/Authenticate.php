@@ -2,20 +2,27 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Closure;
 
-class Authenticate extends Middleware
+class Authenticate
 {
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string|null
-     */
-    protected function redirectTo($request)
+    public function handle($request, Closure $next)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
+        if (! current_user()) {
+            return $this->handleUnauthorizedRequest($request);
         }
+
+        current_user()->registerLastActivity()->save();
+
+        return $next($request);
+    }
+
+    protected function handleUnauthorizedRequest($request)
+    {
+        if ($request->ajax()) {
+            return response('Unauthorized.', 401);
+        }
+
+        return redirect()->guest($request->isFront() ? route('login') : route('back.login'));
     }
 }
