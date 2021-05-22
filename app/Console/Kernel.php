@@ -4,38 +4,30 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Spatie\Backup\Commands\BackupCommand;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
     protected $commands = [
-        //
+        \App\Console\Commands\GenerateModule::class,
+        \App\Console\Commands\ImportFragments::class,
+        \App\Console\Commands\PrefetchAnalyticsData::class,
+        \Spatie\ArtisanDd\DdCommand::class,
+        \Spatie\LinkChecker\CheckLinksCommand::class,
     ];
 
-    /**
-     * Define the application's command schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
-     */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+        $schedule->command(BackupCommand::class)->dailyAt('03:00');
+        $schedule->command(BackupCommand::class, ['--only-db'])->hourly();
     }
 
     /**
-     * Register the commands for the application.
-     *
-     * @return void
+     * Register the Closure based commands for the application.
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
-
-        require base_path('routes/console.php');
+        //require base_path('routes/console.php');
     }
 }

@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
+        'guard' => 'front',
+        'passwords' => 'front',
     ],
 
     /*
@@ -36,15 +36,13 @@ return [
     */
 
     'guards' => [
-        'web' => [
+        'front' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'front',
         ],
-
-        'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
-            'hash' => false,
+        'back' => [
+            'driver' => 'session',
+            'provider' => 'back',
         ],
     ],
 
@@ -66,21 +64,24 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'front' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Services\Auth\Front\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'back' => [
+            'driver' => 'eloquent',
+            'model' => App\Services\Auth\Back\User::class,
+        ],
     ],
 
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
     |--------------------------------------------------------------------------
+    |
+    | Here you may set the options for resetting passwords including the view
+    | that is your password reset e-mail. You may also set the name of the
+    | table that maintains all of the reset tokens for your application.
     |
     | You may specify multiple password reset configurations if you have more
     | than one user table or model in the application and you want to have
@@ -93,25 +94,18 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'front' => [
+            'provider' => 'front',
+            'email' => 'mails.auth.front.passwords',
             'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
+            'expire' => 60 * 24 * 4,
+        ],
+        'back' => [
+            'provider' => 'back',
+            'email' => 'mails.auth.back.passwords',
+            'table' => 'password_resets',
+            'expire' => 60 * 24 * 4,
         ],
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Password Confirmation Timeout
-    |--------------------------------------------------------------------------
-    |
-    | Here you may define the amount of seconds before a password confirmation
-    | times out and the user is prompted to re-enter their password via the
-    | confirmation screen. By default, the timeout lasts for three hours.
-    |
-    */
-
-    'password_timeout' => 10800,
 
 ];

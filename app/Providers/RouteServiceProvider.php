@@ -2,62 +2,115 @@
 
 namespace App\Providers;
 
-use Illuminate\Cache\RateLimiting\Limit;
+use Exception;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * The path to the "home" route for your application.
-     *
-     * This is used by Laravel authentication to redirect users after login.
-     *
-     * @var string
-     */
-    public const HOME = '/home';
+    protected $namespace = 'App\Http\Controllers';
 
-    /**
-     * The controller namespace for the application.
-     *
-     * When present, controller route declarations will automatically be prefixed with this namespace.
-     *
-     * @var string|null
-     */
-    // protected $namespace = 'App\\Http\\Controllers';
-
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @return void
-     */
     public function boot()
     {
-        $this->configureRateLimiting();
+        $this->registerMacros(app(\Illuminate\Routing\Router::class));
 
-        $this->routes(function () {
-            Route::prefix('api')
-                ->middleware('api')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/api.php'));
+        parent::boot();
+    }
 
-            Route::middleware('web')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
+    protected function registerMacros(Router $router)
+    {
+        $router->macro('module', function ($module, $sortable = false) use ($router) {
+            $controller = ucfirst($module).'Controller';
+            if ($sortable) {
+                $router->patch("{$module}/changeOrder", $controller.'@changeOrder');
+            }
+
+            $router->resource($module, $controller);
         });
     }
 
-    /**
-     * Configure the rate limiters for the application.
-     *
-     * @return void
-     */
-    protected function configureRateLimiting()
+    public function map(Router $router)
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
+        Route::namespace($this->namespace)->group(function () {
+
+            /*
+             * Special routes
+             */
+            Route::middleware('web')->group(function () {
+                Route::demoAccess('/demo');
+
+                Route::get('coming-soon', function () {
+                    return view('temp/index');
+                });
+            });
+
+            /*
+             * Back site
+             */
+            Route::prefix('blender')
+                ->middleware('web')
+                ->namespace('Back')
+                ->group(function () {
+                    Route::get('login', 'Auth\LoginController@showLoginForm')->name('back.login');
+                    Route::post('login', 'Auth\LoginController@login');
+                    Route::post('logout', 'Auth\LoginController@logout')->name('back.logout');
+
+                    Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm');
+                    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
+                    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
+                    Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+
+                    Route::middleware('auth')->group(function () {
+                        require base_path('routes/back.php');
+                    });
+
+                    Route::fallback('NotFoundController');
+                });
+
+            /*
+             * Frontsite
+             */
+            Route::namespace('Front')
+                ->group(function () {
+                    Route::prefix('api')
+                        ->middleware('api')
+                        ->namespace('Api')
+                        ->group(function () {
+                            require base_path('routes/frontApi.php');
+                        });
+
+                    Route::middleware(['web', 'demoMode', 'rememberLocale'])->group(function () {
+                        $multiLingual = count(config('app.locales')) > 1;
+
+                        Route::group($multiLingual ? ['prefix' => locale()] : [], function () {
+                            try {
+                                Auth::routes();
+                                require base_path('routes/front.php');
+                            } catch (Exception $exception) {
+                                logger()->warning("Front routes weren't included because {$exception->getMessage()}.");
+                            }
+                        });
+
+                        if ($multiLingual) {
+                            Route::get('/', function () {
+                                return redirect(locale());
+                            });
+                        }
+
+                        Route::fallback('NotFoundController');
+                    });
+                });
+
+            /*
+             * Mails
+             */
+            if (app()->environment('local')) {
+                Route::prefix('mails')->group(function () {
+                    require base_path('routes/mails.php');
+                });
+            }
         });
     }
 }
