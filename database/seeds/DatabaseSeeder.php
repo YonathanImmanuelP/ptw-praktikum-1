@@ -1,29 +1,16 @@
 <?php
 
-use Spatie\Seeders\DatabaseSeeder as Seeder;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
     public function run()
     {
-        parent::run();
-
-        Cache::flush();
-
-        $this->call(BackUserSeeder::class);
-        $this->call(FrontUserSeeder::class);
-        $this->call(FragmentSeeder::class);
-        $this->call(TagSeeder::class);
-        $this->call(ArticleSeeder::class);
-        $this->call(PersonSeeder::class);
-        $this->call(NewsItemSeeder::class);
-        $this->call(RecipientSeeder::class);
-    }
-
-    protected function times(int $times, callable $callback)
-    {
-        foreach (range(0, $times) as $i) {
-            $callback();
-        }
+        // $this->call(UserSeeder::class);
     }
 }

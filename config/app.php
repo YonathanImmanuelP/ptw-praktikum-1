@@ -10,9 +10,10 @@ return [
     | This value is the name of your application. This value is used when the
     | framework needs to place the application's name in a notification or
     | any other location as required by the application or its packages.
+    |
     */
 
-    'name' => 'Blender',
+    'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -21,7 +22,7 @@ return [
     |
     | This value determines the "environment" your application is currently
     | running in. This may determine how you prefer to configure various
-    | services your application utilizes. Set this in your ".env" file.
+    | services the application utilizes. Set this in your ".env" file.
     |
     */
 
@@ -38,20 +39,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Application Demo Mode
-    |--------------------------------------------------------------------------
-    |
-    | When your application is in demo mode, all request to the front site
-    | are redirecting. To view the full front site a user must
-    | first visit /demo.
-    |
-    */
-
-    'demo' => env('APP_DEMO', false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -66,6 +54,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'asset_url' => env('ASSET_URL', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -77,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'Europe/Brussels',
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -90,20 +80,7 @@ return [
     |
     */
 
-    'locale' => 'nl',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Supported locales
-    |--------------------------------------------------------------------------
-    |
-    | A list of locales the public site supports. Used to determine valid
-    | localized urls and to generate form fields in multiple languages in
-    | Blender.
-    |
-    */
-
-    'locales' => ['nl', 'en'],
+    'locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -120,6 +97,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Faker Locale
+    |--------------------------------------------------------------------------
+    |
+    | This locale will be used by the Faker PHP library when generating fake
+    | data for your database seeds. For example, this will be used to get
+    | localized telephone numbers, street address information and more.
+    |
+    */
+
+    'faker_locale' => 'en_US',
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |
@@ -129,34 +119,9 @@ return [
     |
     */
 
-    'key' => env('APP_KEY', 'SomeRandomStringWith32Characters'),
+    'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Logging Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure the log settings for your application. Out of
-    | the box, Laravel uses the Monolog PHP logging library. This gives
-    | you a variety of powerful log handlers / formatters to utilize.
-    |
-    | Available Settings: "single", "daily", "syslog", "errorlog"
-    |
-    */
-
-    'log' => 'daily',
-
-    'log_max_files' => 365,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Allow robots header
-    |--------------------------------------------------------------------------
-    */
-
-    'allow_robots' => env('ALLOW_ROBOTS', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -171,16 +136,18 @@ return [
 
     'providers' => [
 
+        /*
+         * Laravel Framework Service Providers...
+         */
         Illuminate\Auth\AuthServiceProvider::class,
-        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
+        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
         Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Database\DatabaseServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
         Illuminate\Filesystem\FilesystemServiceProvider::class,
-        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
         Illuminate\Foundation\Providers\FoundationServiceProvider::class,
         Illuminate\Hashing\HashServiceProvider::class,
         Illuminate\Mail\MailServiceProvider::class,
@@ -189,39 +156,25 @@ return [
         Illuminate\Pipeline\PipelineServiceProvider::class,
         Illuminate\Queue\QueueServiceProvider::class,
         Illuminate\Redis\RedisServiceProvider::class,
+        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
         Illuminate\Session\SessionServiceProvider::class,
+        Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        App\Services\Navigation\NavigationServiceProvider::class,
+        /*
+         * Package Service Providers...
+         */
 
-        Barryvdh\Debugbar\ServiceProvider::class,
-        Bugsnag\BugsnagLaravel\BugsnagLaravelServiceProvider::class,
-        Greggilbert\Recaptcha\RecaptchaServiceProvider::class,
-        Laracasts\Flash\FlashServiceProvider::class,
-        Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
-        Propaganistas\LaravelPhone\LaravelPhoneServiceProvider::class,
-        Spatie\BladeJavaScript\BladeJavaScriptServiceProvider::class,
-        Spatie\CookieConsent\CookieConsentServiceProvider::class,
-        Spatie\DemoMode\DemoModeServiceProvider::class,
-        Spatie\Fractal\FractalServiceProvider::class,
-        Spatie\GoogleTagManager\GoogleTagManagerServiceProvider::class,
-        Spatie\Newsletter\NewsletterServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        App\Providers\CollectionServiceProvider::class,
-        App\Providers\DatabaseServiceProvider::class,
-        App\Providers\DuskServiceProvider::class,
-        App\Providers\LocaleServiceProvider::class,
-        App\Providers\ModelServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\QueryBuilderServiceProvider::class,
-        App\Providers\ViewServiceProvider::class,
-        App\Services\Auth\AuthServiceProvider::class,
-        App\Services\Html\HtmlServiceProvider::class,
-        App\Services\Seo\SeoServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\HorizonServiceProvider::class,
+        /*
+         * Application Service Providers...
+         */
         App\Providers\AppServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
+
     ],
 
     /*
@@ -238,10 +191,12 @@ return [
     'aliases' => [
 
         'App' => Illuminate\Support\Facades\App::class,
+        'Arr' => Illuminate\Support\Arr::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
         'Blade' => Illuminate\Support\Facades\Blade::class,
         'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
+        'Bus' => Illuminate\Support\Facades\Bus::class,
         'Cache' => Illuminate\Support\Facades\Cache::class,
         'Config' => Illuminate\Support\Facades\Config::class,
         'Cookie' => Illuminate\Support\Facades\Cookie::class,
@@ -250,9 +205,9 @@ return [
         'Eloquent' => Illuminate\Database\Eloquent\Model::class,
         'Event' => Illuminate\Support\Facades\Event::class,
         'File' => Illuminate\Support\Facades\File::class,
+        'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
-        'Input' => Illuminate\Support\Facades\Input::class,
-        'Inspiring' => Illuminate\Foundation\Inspiring::class,
+        'Http' => Illuminate\Support\Facades\Http::class,
         'Lang' => Illuminate\Support\Facades\Lang::class,
         'Log' => Illuminate\Support\Facades\Log::class,
         'Mail' => Illuminate\Support\Facades\Mail::class,
@@ -260,24 +215,18 @@ return [
         'Password' => Illuminate\Support\Facades\Password::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
-        'Redis'  => Illuminate\Support\Facades\Redis::class,
+        // 'Redis' => Illuminate\Support\Facades\Redis::class,
         'Request' => Illuminate\Support\Facades\Request::class,
         'Response' => Illuminate\Support\Facades\Response::class,
         'Route' => Illuminate\Support\Facades\Route::class,
         'Schema' => Illuminate\Support\Facades\Schema::class,
         'Session' => Illuminate\Support\Facades\Session::class,
         'Storage' => Illuminate\Support\Facades\Storage::class,
+        'Str' => Illuminate\Support\Str::class,
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Gate' => Illuminate\Support\Facades\Gate::class,
-
-        'Activity' => Spatie\Activitylog\ActivitylogFacade::class,
-        'Analytics' => Spatie\Analytics\AnalyticsFacade::class,
-        'Bugsnag' => Bugsnag\BugsnagLaravel\BugsnagFacade::class,
-        'Date' => Jenssegers\Date\Date::class,
-        'GoogleTagManager' => Spatie\GoogleTagManager\GoogleTagManagerFacade::class,
-        'Recaptcha' => Greggilbert\Recaptcha\Facades\Recaptcha::class,
 
     ],
+
 ];

@@ -1,23 +1,22 @@
-# DEV
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
 .env
 .env.backup
-.idea
-.php_cs.cache
-.phpstorm.meta.php
-_ide_helper*.php
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
 
-# BACK END
-/database/seeds/data/~$fragments*.xlsx
-/vendor
-
-# FRONT END
-/node_modules
-/npm-debug.log
-/public/css
-/public/js
-/public/media
-/public/mix-manifest.json
-/yarn-error.log
-
-# REMOVE THIS LINE IN PROJECTS
-/resources/assets/js/back/redactor
+# Ignore mounts
+storage/app/public
+storage/framework/views
+storage/framework/sessions
+storage/framework/cache
+storage/logs
+bootstrap/cache
+.config
